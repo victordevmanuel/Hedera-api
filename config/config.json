@@ -1,0 +1,17 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "123456",
+    "database": "node_api",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "admin",
+    "password": "081&123456",
+    "database": "node_api",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+
+}
