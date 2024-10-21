@@ -7,12 +7,9 @@ module.exports = {
     ],
     routes: [
         {
-            src: '/api/(.*)',
-            dest: '/api/index.js'
-        },
-        {
             src: '/(.*)',
-            dest: '/app.js'
-        }
+            dest: '/'
+        },
+       
     ]
 };
