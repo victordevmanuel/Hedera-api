@@ -10,8 +10,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
-const PORT = process.env.PORT || 4000;
-app.use("/", routes);
+const PORT = process.env.PORT || 4001;
+app.use("/api", routes);
 
 
 app.listen(PORT, () => {
