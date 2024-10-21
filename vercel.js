@@ -7,10 +7,6 @@ module.exports = {
     ],
     routes: [
         {
-            src: '/api/(.*)',
-            dest: '/api'
-        },
-        {
             src: '/(.*)',
             dest: '/'
         }

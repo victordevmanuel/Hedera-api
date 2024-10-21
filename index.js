@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
-app.use("/api", routes);
+app.use("/", routes);
 
 
 app.listen(PORT, () => {
