@@ -9,7 +9,7 @@ const {
   Hbar,
   Client,
 } = require("@hashgraph/sdk");
-const { user } = require("../models");
+const { user, account } = require("../models");
 const jwt = require("jsonwebtoken");
 const { PrivateKey } = require("@hashgraph/sdk");
 const bcrypt = require("bcrypt");
@@ -42,16 +42,14 @@ class UserController {
 
       return res.status(200).json({ name: existingUser.firstName, token });
     } catch (error) {
-      console.error(error); // Imprime el error en la consola
       res.status(500).json({ error: error.message });
     }
   };
-  
+
   logout = async (req, res) => {
     try {
       return res.status(200).json({ success: true, token: "null" });
     } catch (error) {
-      console.error("Error in logout:", error);
       res.status(500).json({ error: error.message });
     }
   };
@@ -59,11 +57,7 @@ class UserController {
   store = async (req, res) => {
     try {
       const { email, firstName, lastName, password } = req.body;
-
-      // Encriptar el password
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Generar un token único con email y password
       const token = jwt.sign(
         { email, password: hashedPassword },
         process.env.JWT_SECRET,
@@ -107,9 +101,21 @@ class UserController {
         .execute(client);
 
       const tokenReceipt = await token.getReceipt(client);
-      return res.status(200).json({ Success: true,  "Account number": tokenReceipt.tokenId.toString() });
+      const tokenId = tokenReceipt.tokenId.toString();
+
+      if (tokenReceipt.status.toString() === "SUCCESS") {
+        await account.create({
+          account: tokenId,
+          name: name,
+        });
+
+        return res
+          .status(200)
+          .json({ Success: true, "Account number": tokenId });
+      } else {
+        return res.status(500).json({ error: "Token creation failed" });
+      }
     } catch (err) {
-      console.error(err);
       res.status(500).json({ error: err.message });
     }
   };
@@ -125,10 +131,22 @@ class UserController {
       const accountId = AccountId.fromString(accountIdString);
       const query = new AccountBalanceQuery().setAccountId(accountId);
       const balance = await query.execute(client);
+      const tokenBalances = balance.tokens._map;
+      const tokenBalancesJson = [];
 
-      res.status(200).json(balance);
+      for (const [tokenId, tokenBalance] of tokenBalances) {
+        const accountRecord = await account.findOne({
+          where: { account: tokenId.toString() },
+        });
+        tokenBalancesJson.push({
+          tokenId: tokenId.toString(),
+          balance: tokenBalance.toString(),
+          name: accountRecord ? accountRecord.name : " ~ ",
+        });
+      }
+
+      res.status(200).json(tokenBalancesJson);
     } catch (error) {
-      console.error("Error in listTokens:", error);
       res.status(500).json({ error: error.message });
     }
   };

@@ -12,9 +12,9 @@ fs.readdirSync(PATH_ROUTES).filter((file) => {
         archivo.push(name);
     }
 });
-
 const models = {
-    user: require('./user')(sequelize, Sequelize.DataTypes,Sequelize.Model),
+    user: require('./user')(sequelize, Sequelize.DataTypes, Sequelize.Model),
+    account: require('./account')(sequelize, Sequelize.DataTypes, Sequelize.Model),
 };
 
 module.exports = models;
