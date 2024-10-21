@@ -1,15 +1,18 @@
 module.exports = {
     builds: [
         {
-            src: 'app.js',
+            src: './index.js',
             use: '@vercel/node'
         }
     ],
     routes: [
         {
+            src: '/api/(.*)',
+            dest: '/api'
+        },
+        {
             src: '/(.*)',
             dest: '/'
-        },
-       
+        }
     ]
 };
